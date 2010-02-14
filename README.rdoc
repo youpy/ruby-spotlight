@@ -1,4 +1,4 @@
-= md_query
+= spotlight
 
 Description goes here.
 

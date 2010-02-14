@@ -1,0 +1,27 @@
+require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+
+describe Spotlight::Query do
+  before do
+    @query = Spotlight::Query.new('kMDItemDisplayName = "spotlight_query_spec.rb"')
+  end
+
+  it "should have query string" do
+    @query.query_string.should eql('kMDItemDisplayName = "spotlight_query_spec.rb"')
+  end
+
+  it "should execute query" do
+    @query.scopes << File.expand_path(File.dirname(__FILE__))
+    result = @query.execute
+    result.size.should eql(1)
+    result.first.should eql(File.expand_path(File.dirname(__FILE__) + '/spotlight_query_spec.rb'))
+
+    @query.scopes = ['/tmp/xxx/yyy']
+    result = @query.execute
+    result.should be_empty
+  end
+
+  it "should execute query with empty scope" do
+    result = @query.execute
+    result.should_not be_empty 
+  end
+end
