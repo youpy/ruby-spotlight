@@ -49,9 +49,9 @@ static VALUE cMDQueryNative_set_search_scopes(int argc, VALUE *argv, VALUE self)
   }
 
   scopesList = CFArrayCreate(kCFAllocatorDefault,
-                                        (const void**)itemsList,
-                                        RARRAY(scopes)->len,
-                                        NULL);
+                             (const void**)itemsList,
+                             RARRAY(scopes)->len,
+                             NULL);
   MDQuerySetSearchScope(getQuery(self), scopesList, 0);
 
   CFRelease(scopesList);
