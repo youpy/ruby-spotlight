@@ -12,6 +12,13 @@ CFStringRef CString2CFString(char *str) {
                                    CFStringGetSystemEncoding());
 }
 
+MDQueryRef getQuery(VALUE obj) {
+  struct QueryObject *queryObject;
+
+  Data_Get_Struct(obj, struct QueryObject, queryObject);
+  return queryObject->query;
+}
+
 static VALUE cMDQueryNative_new(int argc, VALUE *argv, VALUE klass)
 {
   VALUE queryString;
@@ -30,14 +37,12 @@ static VALUE cMDQueryNative_new(int argc, VALUE *argv, VALUE klass)
 static VALUE cMDQueryNative_set_search_scopes(int argc, VALUE *argv, VALUE self)
 {
   VALUE scopes;
-  int i;
-  struct QueryObject *queryObject;
   CFStringRef *itemsList;
   CFArrayRef scopesList;
+  int i;
 
   rb_scan_args(argc, argv, "1", &scopes);
   itemsList = (CFStringRef *)malloc(sizeof(CFStringRef) * (RARRAY(scopes)->len));
-  Data_Get_Struct(self, struct QueryObject, queryObject);
 
   for(i = 0; i < RARRAY(scopes)->len; i ++) {
     itemsList[i] = (CFStringRef)CString2CFString(STR2CSTR(RARRAY(scopes)->ptr[i]));
@@ -47,7 +52,7 @@ static VALUE cMDQueryNative_set_search_scopes(int argc, VALUE *argv, VALUE self)
                                         (const void**)itemsList,
                                         RARRAY(scopes)->len,
                                         NULL);
-  MDQuerySetSearchScope(queryObject->query, scopesList, 0);
+  MDQuerySetSearchScope(getQuery(self), scopesList, 0);
 
   CFRelease(scopesList);
   free(itemsList);
@@ -57,15 +62,11 @@ static VALUE cMDQueryNative_set_search_scopes(int argc, VALUE *argv, VALUE self)
 
 static VALUE cMDQueryNative_execute(int argc, VALUE *argv, VALUE self)
 {
-  struct QueryObject *queryObject;
-  MDQueryRef query;
+  MDQueryRef query = getQuery(self);
   VALUE result;
   int resultCount, i;
   MDItemRef item;
   CFStringRef key;
-
-  Data_Get_Struct(self, struct QueryObject, queryObject);
-  query = queryObject->query;
 
   MDQueryExecute(query, kMDQuerySynchronous);
   MDQueryStop(query);
