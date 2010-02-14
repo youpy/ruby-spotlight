@@ -85,9 +85,11 @@ static VALUE cMDQueryNative_execute(int argc, VALUE *argv, VALUE self)
 }
 
 void Init_md_query_native(void){
+  VALUE rb_mSpotlight;
   VALUE rb_cMDQueryNative;
   
-  rb_cMDQueryNative = rb_define_class("MDQueryNative", rb_cObject);
+  rb_mSpotlight = rb_define_module("Spotlight");
+  rb_cMDQueryNative = rb_define_class_under(rb_mSpotlight, "MDQueryNative", rb_cObject);
   rb_define_singleton_method(rb_cMDQueryNative, "new", cMDQueryNative_new, -1);
   rb_define_method(rb_cMDQueryNative, "set_search_scopes", cMDQueryNative_set_search_scopes, -1);
   rb_define_method(rb_cMDQueryNative, "execute", cMDQueryNative_execute, -1);

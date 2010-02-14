@@ -20,4 +20,5 @@ pkg
 
 ## PROJECT::SPECIFIC
 
-lib/*.bundle
+*.bundle
+
