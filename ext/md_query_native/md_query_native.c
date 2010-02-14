@@ -66,7 +66,7 @@ static VALUE cMDQueryNative_execute(int argc, VALUE *argv, VALUE self)
   VALUE result;
   int resultCount, i;
   MDItemRef item;
-  CFStringRef key;
+  char *itemPath;
 
   MDQueryExecute(query, kMDQuerySynchronous);
   MDQueryStop(query);
@@ -75,10 +75,16 @@ static VALUE cMDQueryNative_execute(int argc, VALUE *argv, VALUE self)
   resultCount = MDQueryGetResultCount(query);
   for(i = 0; i < resultCount; i ++) {
     item = (MDItemRef)MDQueryGetResultAtIndex(query, i);
-    key = (CFStringRef)CString2CFString("kMDItemPath");
-    rb_ary_push(result,
-                rb_str_new2(CFStringGetCStringPtr((CFStringRef)MDItemCopyAttribute(item, key),
-                                                  CFStringGetSystemEncoding())));
+
+    if(MDItemCopyAttribute(item, kMDItemPath) != NULL) {
+      CFStringRef itemValue = (CFStringRef)MDItemCopyAttribute(item, kMDItemPath);
+      int stringSize = CFStringGetMaximumSizeForEncoding(CFStringGetLength(itemValue), kCFStringEncodingUTF8) + 1;
+      char* tmpptr = (char*)malloc(sizeof(char) * stringSize);
+
+      CFStringGetCString(itemValue, tmpptr, stringSize, kCFStringEncodingUTF8);
+      rb_ary_push(result, rb_str_new2(tmpptr));
+      free(tmpptr);
+    }
   }
 
   return result;
