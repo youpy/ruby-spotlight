@@ -10,7 +10,7 @@ begin
     gem.email = "youpy@buycheapviagraonlinenow.com"
     gem.homepage = "http://github.com/youpy/spotlight"
     gem.authors = ["youpy"]
-    gem.files = FileList['lib/**/*.rb', '**/*.c'].to_a
+    gem.files = FileList['lib/**/*.rb', '**/*.c', '**/*.h'].to_a
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "rake-compiler"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings

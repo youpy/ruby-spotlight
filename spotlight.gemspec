@@ -12,13 +12,15 @@ Gem::Specification.new do |s|
   s.date = %q{2010-02-15}
   s.description = %q{Library to use Spotlight from Ruby}
   s.email = %q{youpy@buycheapviagraonlinenow.com}
-  s.extensions = ["ext/md_query_native/extconf.rb"]
+  s.extensions = ["ext/md_item_native/extconf.rb", "ext/md_query_native/extconf.rb"]
   s.extra_rdoc_files = [
     "LICENSE",
      "README.rdoc"
   ]
   s.files = [
-    "ext/md_query_native/md_query_native.c",
+    "ext/md_item_native/md_item_native.c",
+     "ext/md_item_native/md_item_native.h",
+     "ext/md_query_native/md_query_native.c",
      "lib/spotlight.rb",
      "lib/spotlight/query.rb"
   ]
@@ -28,7 +30,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{Spotlight for Ruby}
   s.test_files = [
-    "spec/md_query_native_spec.rb",
+    "spec/md_item_native_spec.rb",
+     "spec/md_query_native_spec.rb",
      "spec/spec_helper.rb",
      "spec/spotlight_query_spec.rb"
   ]
