@@ -63,28 +63,30 @@ static VALUE cMDQueryNative_set_search_scopes(int argc, VALUE *argv, VALUE self)
 static VALUE cMDQueryNative_execute(int argc, VALUE *argv, VALUE self)
 {
   MDQueryRef query = getQuery(self);
-  VALUE result;
-  int resultCount, i;
+  VALUE result = rb_ary_new();
+  int resultCount, i, stringSize;
   MDItemRef item;
-  char *itemPath;
+  CFStringRef itemValue;
+  char *tmpptr;
 
   MDQueryExecute(query, kMDQuerySynchronous);
   MDQueryStop(query);
-
-  result = rb_ary_new();
   resultCount = MDQueryGetResultCount(query);
   for(i = 0; i < resultCount; i ++) {
     item = (MDItemRef)MDQueryGetResultAtIndex(query, i);
+    itemValue = (CFStringRef)MDItemCopyAttribute(item, kMDItemPath);
 
-    if(MDItemCopyAttribute(item, kMDItemPath) != NULL) {
-      CFStringRef itemValue = (CFStringRef)MDItemCopyAttribute(item, kMDItemPath);
-      int stringSize = CFStringGetMaximumSizeForEncoding(CFStringGetLength(itemValue), kCFStringEncodingUTF8) + 1;
-      char* tmpptr = (char*)malloc(sizeof(char) * stringSize);
+    if(itemValue != NULL) {
+      stringSize = CFStringGetMaximumSizeForEncoding(CFStringGetLength(itemValue), kCFStringEncodingUTF8) + 1;
+      tmpptr = (char *)malloc(sizeof(char) * stringSize);
 
       CFStringGetCString(itemValue, tmpptr, stringSize, kCFStringEncodingUTF8);
       rb_ary_push(result, rb_str_new2(tmpptr));
+
       free(tmpptr);
     }
+
+    CFRelease(itemValue);
   }
 
   return result;
