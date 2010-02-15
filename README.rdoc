@@ -6,10 +6,17 @@ Description goes here.
 
  require 'spotlight'
 
+=== Finds files matching a given query
+
  query = Spotlight::Query.new('kMDItemKind = "JPEG image" && kMDItemPixelHeight > 2000')
  query.execute.map {|item|
    puts item.get(:kMDItemPath)
  }
+
+=== Gets the metadata attributes for the specified file
+
+ item = Spotlight::Item.new('/Users/youpy/foo')
+ item.get(:kMDItemKind)
 
 == Note on Patches/Pull Requests
  
