@@ -2,6 +2,15 @@
 
 Description goes here.
 
+== Synopsis
+
+ require 'spotlight'
+
+ query = Spotlight::Query.new('kMDItemKind = "JPEG image" && kMDItemPixelHeight > 2000')
+ query.execute.map {|item|
+   puts item.get(:kMDItemPath)
+ }
+
 == Note on Patches/Pull Requests
  
 * Fork the project.
