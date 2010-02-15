@@ -1,5 +1,6 @@
 #include <ruby.h>
 #include </System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Headers/MDQuery.h>
+#include "../md_item_native/md_item_native.h"
 
 struct QueryObject {
   CFStringRef queryString;
@@ -63,30 +64,18 @@ static VALUE cMDQueryNative_set_search_scopes(int argc, VALUE *argv, VALUE self)
 static VALUE cMDQueryNative_execute(int argc, VALUE *argv, VALUE self)
 {
   MDQueryRef query = getQuery(self);
-  VALUE result = rb_ary_new();
-  int resultCount, i, stringSize;
   MDItemRef item;
-  CFStringRef itemValue;
-  char *tmpptr;
+  VALUE result = rb_ary_new();
+  VALUE rItem;
+  int resultCount, i;
 
   MDQueryExecute(query, kMDQuerySynchronous);
   MDQueryStop(query);
   resultCount = MDQueryGetResultCount(query);
   for(i = 0; i < resultCount; i ++) {
     item = (MDItemRef)MDQueryGetResultAtIndex(query, i);
-    itemValue = (CFStringRef)MDItemCopyAttribute(item, kMDItemPath);
-
-    if(itemValue != NULL) {
-      stringSize = CFStringGetMaximumSizeForEncoding(CFStringGetLength(itemValue), kCFStringEncodingUTF8) + 1;
-      tmpptr = (char *)malloc(sizeof(char) * stringSize);
-
-      CFStringGetCString(itemValue, tmpptr, stringSize, kCFStringEncodingUTF8);
-      rb_ary_push(result, rb_str_new2(tmpptr));
-
-      free(tmpptr);
-    }
-
-    CFRelease(itemValue);
+    rItem = createInstanceFromMDItem(item);
+    rb_ary_push(result, rItem);
   }
 
   return result;

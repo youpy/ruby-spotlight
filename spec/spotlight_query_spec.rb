@@ -13,7 +13,8 @@ describe Spotlight::Query do
     @query.scopes << File.expand_path(File.dirname(__FILE__))
     result = @query.execute
     result.size.should eql(1)
-    result.first.should eql(File.expand_path(File.dirname(__FILE__) + '/spotlight_query_spec.rb'))
+    result.first.should be_an_instance_of(Spotlight::MDItemNative)
+    result.first.get(:kMDItemPath).should eql(File.expand_path(File.dirname(__FILE__) + '/spotlight_query_spec.rb'))
 
     @query.scopes = ['/tmp/xxx/yyy']
     result = @query.execute

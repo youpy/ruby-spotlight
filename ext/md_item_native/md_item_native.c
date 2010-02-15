@@ -1,5 +1,6 @@
-#include <ruby.h>
-#include </System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Headers/MDItem.h>
+#include "md_item_native.h"
+
+static VALUE rb_cMDItemNative;
 
 struct ItemObject {
   MDItemRef item;
@@ -18,17 +19,24 @@ MDItemRef getItem(VALUE obj) {
   return itemObject->item;
 }
 
+VALUE createInstanceFromMDItem(MDItemRef item) {
+  struct ItemObject *itemObject;
+
+  itemObject = malloc(sizeof(struct ItemObject));
+  itemObject->item = item;
+
+  return Data_Wrap_Struct(rb_cMDItemNative, 0, -1, itemObject);
+}
+
 static VALUE cMDItemNative_new(int argc, VALUE *argv, VALUE klass)
 {
-  struct ItemObject *itemObject;
   VALUE filename, obj;
   MDItemRef item;
+
   rb_scan_args(argc, argv, "1", &filename);
-  struct ItemObject *i = malloc(sizeof(struct ItemObject));
   item = MDItemCreate(kCFAllocatorDefault, CString2CFString(STR2CSTR(filename)));
   if(item != NULL) {
-    i->item = item;
-    obj = Data_Wrap_Struct(klass, 0, -1, i);
+    obj = createInstanceFromMDItem(item);
   } else {
     rb_raise(rb_eArgError, "no such file or directory");
   }
@@ -57,21 +65,20 @@ static VALUE cMDItemNative_get(int argc, VALUE *argv, VALUE self)
     tmpptr = (char *)malloc(sizeof(char) * stringSize);
 
     CFStringGetCString(itemValue, tmpptr, stringSize, kCFStringEncodingUTF8);
+
     result = rb_str_new2(tmpptr);
 
     free(tmpptr);
+    CFRelease(itemValue);
   } else {
-    result = Qnil;
+    return Qnil;
   }
-
-  CFRelease(itemValue);
 
   return result;
 }
 
 void Init_md_item_native(void){
   VALUE rb_mSpotlight;
-  VALUE rb_cMDItemNative;
   
   rb_mSpotlight = rb_define_module("Spotlight");
   rb_cMDItemNative = rb_define_class_under(rb_mSpotlight, "MDItemNative", rb_cObject);
