@@ -19,6 +19,7 @@ begin
   Jeweler::GemcutterTasks.new
 
   require 'rake/extensiontask'
+  Rake::ExtensionTask.new('md_item_native', tasks.gemspec)
   Rake::ExtensionTask.new('md_query_native', tasks.gemspec)
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
