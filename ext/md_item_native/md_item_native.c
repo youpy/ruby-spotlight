@@ -19,27 +19,44 @@ MDItemRef getItem(VALUE obj) {
   return itemObject->item;
 }
 
+void cMDItemNative_free(void *ptr) {
+  MDItemRef item = (MDItemRef)(((struct ItemObject *)ptr)->item);
+
+  if(item != NULL) {
+    CFRelease(item);
+  }
+
+  free(ptr);
+/*   printf("cMDItemNative_free()\n"); */
+}
+
 VALUE createInstanceFromMDItem(MDItemRef item) {
   struct ItemObject *itemObject;
 
   itemObject = malloc(sizeof(struct ItemObject));
   itemObject->item = item;
 
-  return Data_Wrap_Struct(rb_cMDItemNative, 0, -1, itemObject);
+  return Data_Wrap_Struct(rb_cMDItemNative, 0, cMDItemNative_free, itemObject);
 }
 
 static VALUE cMDItemNative_new(int argc, VALUE *argv, VALUE klass)
 {
   VALUE filename, obj;
   MDItemRef item;
+  CFStringRef cfFilename;
 
   rb_scan_args(argc, argv, "1", &filename);
-  item = MDItemCreate(kCFAllocatorDefault, CString2CFString(STR2CSTR(filename)));
+
+  cfFilename = CString2CFString(StringValuePtr(filename));
+  item = MDItemCreate(kCFAllocatorDefault, cfFilename);
+
   if(item != NULL) {
     obj = createInstanceFromMDItem(item);
   } else {
     rb_raise(rb_eArgError, "no such file or directory");
   }
+
+  CFRelease(cfFilename);
 
   return obj;
 }
@@ -47,7 +64,7 @@ static VALUE cMDItemNative_new(int argc, VALUE *argv, VALUE klass)
 static VALUE cMDItemNative_get(int argc, VALUE *argv, VALUE self)
 {
   MDItemRef item = getItem(self);
-  CFStringRef itemValue;
+  CFStringRef itemValue, cfAttrName;
   VALUE attrName, result;
   char *tmpptr;
   int stringSize;
@@ -55,10 +72,12 @@ static VALUE cMDItemNative_get(int argc, VALUE *argv, VALUE self)
   rb_scan_args(argc, argv, "1", &attrName);
 
   if(TYPE(attrName) == T_SYMBOL) {
-    itemValue = (CFStringRef)MDItemCopyAttribute(item, CString2CFString(rb_id2name(SYM2ID(attrName))));
+    cfAttrName = (CFStringRef)CString2CFString(rb_id2name(SYM2ID(attrName)));
   } else {
-    itemValue = (CFStringRef)MDItemCopyAttribute(item, CString2CFString(STR2CSTR(attrName)));
+    cfAttrName = (CFStringRef)CString2CFString(StringValuePtr(attrName));
   }
+
+  itemValue = (CFStringRef)MDItemCopyAttribute(item, cfAttrName);
 
   if(itemValue != NULL) {
     stringSize = CFStringGetMaximumSizeForEncoding(CFStringGetLength(itemValue), kCFStringEncodingUTF8) + 1;
@@ -69,6 +88,7 @@ static VALUE cMDItemNative_get(int argc, VALUE *argv, VALUE self)
     result = rb_str_new2(tmpptr);
 
     free(tmpptr);
+    CFRelease(cfAttrName);
     CFRelease(itemValue);
   } else {
     return Qnil;

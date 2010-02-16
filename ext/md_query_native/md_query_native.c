@@ -20,6 +20,22 @@ MDQueryRef getQuery(VALUE obj) {
   return queryObject->query;
 }
 
+void cMDQueryNative_free(void *ptr) {
+  MDQueryRef query = (MDQueryRef)(((struct QueryObject *)ptr)->query);
+  CFStringRef queryString = (CFStringRef)(((struct QueryObject *)ptr)->queryString);
+
+  if(query != NULL) {
+    CFRelease(query);
+  }
+
+  if(queryString != NULL) {
+    CFRelease(queryString);
+  }
+
+  free(ptr);
+/*   printf("cMDQueryNative_free()\n"); */
+}
+
 static VALUE cMDQueryNative_new(int argc, VALUE *argv, VALUE klass)
 {
   VALUE queryString;
@@ -28,9 +44,9 @@ static VALUE cMDQueryNative_new(int argc, VALUE *argv, VALUE klass)
   rb_scan_args(argc, argv, "1", &queryString);
 
   struct QueryObject *q = malloc(sizeof(struct QueryObject));
-  q->queryString = CString2CFString(STR2CSTR(queryString));
+  q->queryString = CString2CFString(StringValuePtr(queryString));
   q->query = MDQueryCreate(kCFAllocatorDefault, q->queryString, NULL, NULL);
-  obj = Data_Wrap_Struct(klass, 0, 0, q);
+  obj = Data_Wrap_Struct(klass, 0, cMDQueryNative_free, q);
 
   return obj;
 }
@@ -46,7 +62,7 @@ static VALUE cMDQueryNative_set_search_scopes(int argc, VALUE *argv, VALUE self)
   itemsList = (CFStringRef *)malloc(sizeof(CFStringRef) * (RARRAY(scopes)->len));
 
   for(i = 0; i < RARRAY(scopes)->len; i ++) {
-    itemsList[i] = (CFStringRef)CString2CFString(STR2CSTR(RARRAY(scopes)->ptr[i]));
+    itemsList[i] = (CFStringRef)CString2CFString(StringValuePtr(RARRAY(scopes)->ptr[i]));
   }
 
   scopesList = CFArrayCreate(kCFAllocatorDefault,
@@ -74,8 +90,11 @@ static VALUE cMDQueryNative_execute(int argc, VALUE *argv, VALUE self)
   resultCount = MDQueryGetResultCount(query);
   for(i = 0; i < resultCount; i ++) {
     item = (MDItemRef)MDQueryGetResultAtIndex(query, i);
-    rItem = createInstanceFromMDItem(item);
-    rb_ary_push(result, rItem);
+    if(item != NULL) {
+      CFRetain(item);
+      rItem = createInstanceFromMDItem(item);
+      rb_ary_push(result, rItem);
+    }
   }
 
   return result;
