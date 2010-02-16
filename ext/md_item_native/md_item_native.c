@@ -12,6 +12,20 @@ CFStringRef CString2CFString(char *str) {
                                    CFStringGetSystemEncoding());
 }
 
+VALUE CFString2RString(CFStringRef str) {
+  int stringSize;
+  char *tmpptr;
+  VALUE result;
+
+  stringSize = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str), kCFStringEncodingUTF8) + 1;
+  tmpptr = (char *)malloc(sizeof(char) * stringSize);
+  CFStringGetCString(str, tmpptr, stringSize, kCFStringEncodingUTF8);
+  result = rb_str_new2(tmpptr);
+  free(tmpptr);
+
+  return result;
+}
+
 MDItemRef getItem(VALUE obj) {
   struct ItemObject *itemObject;
 
@@ -66,8 +80,6 @@ static VALUE cMDItemNative_get(int argc, VALUE *argv, VALUE self)
   MDItemRef item = getItem(self);
   CFStringRef itemValue, cfAttrName;
   VALUE attrName, result;
-  char *tmpptr;
-  int stringSize;
   
   rb_scan_args(argc, argv, "1", &attrName);
 
@@ -82,18 +94,34 @@ static VALUE cMDItemNative_get(int argc, VALUE *argv, VALUE self)
   CFRelease(cfAttrName);
 
   if(itemValue != NULL) {
-    stringSize = CFStringGetMaximumSizeForEncoding(CFStringGetLength(itemValue), kCFStringEncodingUTF8) + 1;
-    tmpptr = (char *)malloc(sizeof(char) * stringSize);
-
-    CFStringGetCString(itemValue, tmpptr, stringSize, kCFStringEncodingUTF8);
-
-    result = rb_str_new2(tmpptr);
-
-    free(tmpptr);
+    result = CFString2RString(itemValue);
     CFRelease(itemValue);
   } else {
     return Qnil;
   }
+
+  return result;
+}
+
+static VALUE cMDItemNative_attribute_names(int argc, VALUE *argv, VALUE self)
+{
+  MDItemRef item = getItem(self);
+  CFArrayRef cfAttributeNames;
+  VALUE result = rb_ary_new();
+  int numAttributes, i;
+
+  rb_scan_args(argc, argv, "0");
+
+  cfAttributeNames = MDItemCopyAttributeNames(item);
+
+  if(cfAttributeNames != NULL) {
+    numAttributes = (int)CFArrayGetCount(cfAttributeNames);
+    for(i = 0; i < numAttributes; i ++) {
+      rb_ary_push(result, CFString2RString((CFStringRef)CFArrayGetValueAtIndex(cfAttributeNames, i)));
+    }
+  }
+
+  CFRelease(cfAttributeNames);
 
   return result;
 }
@@ -105,4 +133,5 @@ void Init_md_item_native(void){
   rb_cMDItemNative = rb_define_class_under(rb_mSpotlight, "MDItemNative", rb_cObject);
   rb_define_singleton_method(rb_cMDItemNative, "new", cMDItemNative_new, -1);
   rb_define_method(rb_cMDItemNative, "get", cMDItemNative_get, -1);
+  rb_define_method(rb_cMDItemNative, "attribute_names", cMDItemNative_attribute_names, -1);
 }

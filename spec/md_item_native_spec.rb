@@ -17,4 +17,10 @@ describe Spotlight::MDItemNative do
   it "should get nil if attribute is not found" do
     @query.get('kMDXXXXXX').should be_nil
   end
+
+  it "should get attribute names" do
+    attribute_names = @query.attribute_names
+    attribute_names.should be_an_instance_of(Array)
+    attribute_names.should be_include('kMDItemKind')
+  end
 end
