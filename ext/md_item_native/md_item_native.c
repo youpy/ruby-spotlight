@@ -79,6 +79,8 @@ static VALUE cMDItemNative_get(int argc, VALUE *argv, VALUE self)
 
   itemValue = (CFStringRef)MDItemCopyAttribute(item, cfAttrName);
 
+  CFRelease(cfAttrName);
+
   if(itemValue != NULL) {
     stringSize = CFStringGetMaximumSizeForEncoding(CFStringGetLength(itemValue), kCFStringEncodingUTF8) + 1;
     tmpptr = (char *)malloc(sizeof(char) * stringSize);
@@ -88,7 +90,6 @@ static VALUE cMDItemNative_get(int argc, VALUE *argv, VALUE self)
     result = rb_str_new2(tmpptr);
 
     free(tmpptr);
-    CFRelease(cfAttrName);
     CFRelease(itemValue);
   } else {
     return Qnil;
