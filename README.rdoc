@@ -14,6 +14,10 @@ Description goes here.
    puts item.get(:kMDItemPath)
  }
 
+=== Creates query from .savedSearch
+
+ query = Spotlight::Query.from_saved_search('foo.savedSearch')
+
 === Gets the metadata attribute for the specified file
 
  item = Spotlight::Item.new('/Users/youpy/foo')

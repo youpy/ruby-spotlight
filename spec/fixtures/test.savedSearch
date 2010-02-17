@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CompatibleVersion</key>
+	<integer>1</integer>
+	<key>RawQuery</key>
+	<string>((true) &amp;&amp; (true)) &amp;&amp; ((* = "test*"cdw || kMDItemTextContent = "test*"cdw))</string>
+	<key>RawQueryDict</key>
+	<dict>
+		<key>FinderFilesOnly</key>
+		<true/>
+		<key>RawQuery</key>
+		<string>((true) &amp;&amp; (true)) &amp;&amp; ((* = "test*"cdw || kMDItemTextContent = "test*"cdw))</string>
+		<key>SearchScopes</key>
+		<array>
+			<string>kMDQueryScopeComputer</string>
+		</array>
+		<key>UserFilesOnly</key>
+		<true/>
+	</dict>
+	<key>SearchCriteria</key>
+	<dict>
+		<key>AnyAttributeContains</key>
+		<string>test</string>
+		<key>CurrentFolderPath</key>
+		<array>
+			<string>/Users/youpy</string>
+		</array>
+		<key>FXCriteriaSlices</key>
+		<array>
+			<dict>
+				<key>criteria</key>
+				<array>
+					<string>com_apple_UserSearchStringAttribute</string>
+					<integer>104</integer>
+				</array>
+				<key>displayValues</key>
+				<array>
+					<string>Items matching text</string>
+					<string>test</string>
+				</array>
+				<key>rowType</key>
+				<integer>0</integer>
+				<key>subrows</key>
+				<array/>
+			</dict>
+			<dict>
+				<key>criteria</key>
+				<array>
+					<string>kMDItemKind</string>
+					<integer>300</integer>
+					<integer>400</integer>
+				</array>
+				<key>displayValues</key>
+				<array>
+					<string>Kind</string>
+					<string>is</string>
+					<string>any</string>
+				</array>
+				<key>rowType</key>
+				<integer>0</integer>
+				<key>subrows</key>
+				<array/>
+			</dict>
+		</array>
+		<key>FXScope</key>
+		<integer>1396925814</integer>
+		<key>FXScopeArrayOfPaths</key>
+		<array>
+			<string>kMDQueryScopeComputer</string>
+		</array>
+	</dict>
+	<key>ViewOptions</key>
+	<dict>
+		<key>SidebarWidth</key>
+		<integer>242</integer>
+		<key>ToolbarVisible</key>
+		<true/>
+		<key>ViewStyle</key>
+		<string>icnv</string>
+		<key>WindowBounds</key>
+		<dict>
+			<key>bottom</key>
+			<integer>0</integer>
+			<key>left</key>
+			<integer>0</integer>
+			<key>right</key>
+			<integer>0</integer>
+			<key>top</key>
+			<integer>0</integer>
+		</dict>
+	</dict>
+</dict>
+</plist>

@@ -5,6 +5,12 @@ describe Spotlight::Query do
     @query = Spotlight::Query.new('kMDItemDisplayName = "spotlight_query_spec.rb"')
   end
 
+  it "should create query from saved search" do
+    query = Spotlight::Query.from_saved_search(fixture('test.savedSearch'))
+    query.query_string.should eql('((true) && (true)) && ((* = "test*"cdw || kMDItemTextContent = "test*"cdw))')
+    query.scopes.should eql(['kMDQueryScopeComputer'])
+  end
+
   it "should have query string" do
     @query.query_string.should eql('kMDItemDisplayName = "spotlight_query_spec.rb"')
   end
