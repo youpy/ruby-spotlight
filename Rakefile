@@ -8,7 +8,7 @@ begin
     gem.summary = %Q{Spotlight for Ruby}
     gem.description = %Q{Library to use Spotlight from Ruby}
     gem.email = "youpy@buycheapviagraonlinenow.com"
-    gem.homepage = "http://github.com/youpy/spotlight"
+    gem.homepage = "http://github.com/youpy/ruby-spotlight"
     gem.authors = ["youpy"]
     gem.files = FileList['lib/**/*.rb', '**/*.c', '**/*.h'].to_a
     gem.add_development_dependency "rspec", ">= 1.2.9"
