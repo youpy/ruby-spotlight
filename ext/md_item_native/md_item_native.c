@@ -9,7 +9,7 @@ struct ItemObject {
 CFStringRef CString2CFString(char *str) {
   return CFStringCreateWithCString(kCFAllocatorDefault,
                                    str,
-                                   CFStringGetSystemEncoding());
+                                   kCFStringEncodingUTF8);
 }
 
 VALUE CFString2RString(CFStringRef str) {
@@ -22,6 +22,58 @@ VALUE CFString2RString(CFStringRef str) {
   CFStringGetCString(str, tmpptr, stringSize, kCFStringEncodingUTF8);
   result = rb_str_new2(tmpptr);
   free(tmpptr);
+
+  return result;
+}
+
+VALUE CFType2Value(CFTypeRef thing) {
+  int i;
+  double doubleValue;
+  CFNumberType numberType;
+  CFAbsoluteTime timeNow;
+  CFGregorianDate current;
+  VALUE result;
+
+/*   CFStringRef stringValue = CFCopyDescription(thing); */
+/*   rb_p(CFString2RString(stringValue)); */
+/*   CFRelease(stringValue); */
+
+  if(CFGetTypeID(thing) == CFStringGetTypeID()) {
+    result = CFString2RString((CFStringRef)thing);
+  } else if(CFGetTypeID(thing) == CFNumberGetTypeID()) {
+    numberType = CFNumberGetType((CFNumberRef)thing);
+    switch(numberType) {
+    case kCFNumberFloat64Type:
+      CFNumberGetValue((CFNumberRef)thing, numberType, &doubleValue);
+      result = rb_float_new(doubleValue);
+      break;
+    case kCFNumberSInt32Type:
+    case kCFNumberSInt64Type:
+    default:
+      CFNumberGetValue((CFNumberRef)thing, kCFNumberDoubleType, &doubleValue);
+      result = INT2FIX((double)doubleValue);
+      break;
+    }
+  } else if(CFGetTypeID(thing) == CFDateGetTypeID()) {
+    timeNow = CFDateGetAbsoluteTime((CFDateRef)thing);
+    current = CFAbsoluteTimeGetGregorianDate(timeNow, NULL);
+    result = rb_funcall(rb_cTime, rb_intern("gm"), 6,
+                        INT2FIX((unsigned int)current.year),
+                        INT2FIX((unsigned int)current.month),
+                        INT2FIX((unsigned int)current.day),
+                        INT2FIX((unsigned int)current.hour),
+                        INT2FIX((unsigned int)current.minute),
+                        INT2FIX((unsigned int)current.second));
+  } else if(CFGetTypeID(thing) == CFBooleanGetTypeID()) {
+    result = CFBooleanGetValue(thing) ? Qtrue : Qfalse;
+  } else if(CFGetTypeID(thing) == CFArrayGetTypeID()) {
+    result = rb_ary_new();
+    for(i = 0; i < CFArrayGetCount(thing); i ++) {
+      rb_ary_push(result, CFType2Value(CFArrayGetValueAtIndex(thing, i)));
+    }
+  } else {
+    result = Qnil;
+  }
 
   return result;
 }
@@ -41,6 +93,7 @@ void cMDItemNative_free(void *ptr) {
   }
 
   free(ptr);
+
 /*   printf("cMDItemNative_free()\n"); */
 }
 
@@ -67,7 +120,7 @@ static VALUE cMDItemNative_new(int argc, VALUE *argv, VALUE klass)
   if(item != NULL) {
     obj = createInstanceFromMDItem(item);
   } else {
-    rb_raise(rb_eArgError, "no such file or directory");
+    rb_raise(rb_eArgError, "no such file or directory: %s", filename);
   }
 
   CFRelease(cfFilename);
@@ -78,9 +131,10 @@ static VALUE cMDItemNative_new(int argc, VALUE *argv, VALUE klass)
 static VALUE cMDItemNative_get(int argc, VALUE *argv, VALUE self)
 {
   MDItemRef item = getItem(self);
-  CFStringRef itemValue, cfAttrName;
+  CFTypeRef itemValue;
+  CFStringRef cfAttrName;
   VALUE attrName, result;
-  
+
   rb_scan_args(argc, argv, "1", &attrName);
 
   if(TYPE(attrName) == T_SYMBOL) {
@@ -89,18 +143,19 @@ static VALUE cMDItemNative_get(int argc, VALUE *argv, VALUE self)
     cfAttrName = (CFStringRef)CString2CFString(StringValuePtr(attrName));
   }
 
-  itemValue = (CFStringRef)MDItemCopyAttribute(item, cfAttrName);
+/*   rb_p(CFString2RString(cfAttrName)); */
+
+  itemValue = MDItemCopyAttribute(item, cfAttrName);
 
   CFRelease(cfAttrName);
 
   if(itemValue != NULL) {
-    result = CFString2RString(itemValue);
+    result = CFType2Value(itemValue);
     CFRelease(itemValue);
-  } else {
-    return Qnil;
+    return result;
   }
 
-  return result;
+  return Qnil;
 }
 
 static VALUE cMDItemNative_attribute_names(int argc, VALUE *argv, VALUE self)
