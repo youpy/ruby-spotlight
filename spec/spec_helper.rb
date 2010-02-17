@@ -4,6 +4,8 @@ require 'spotlight'
 require 'spec'
 require 'spec/autorun'
 
+system('mdimport ' + File.dirname(__FILE__))
+
 Spec::Runner.configure do |config|
   def fixture(filename)
     File.dirname(__FILE__) + '/fixtures/' + filename
