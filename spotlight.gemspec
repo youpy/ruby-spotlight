@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
      "lib/spotlight.rb",
      "lib/spotlight/query.rb"
   ]
-  s.homepage = %q{http://github.com/youpy/spotlight}
+  s.homepage = %q{http://github.com/youpy/ruby-spotlight}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}
