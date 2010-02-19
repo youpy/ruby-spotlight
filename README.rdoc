@@ -18,6 +18,10 @@ Description goes here.
 
  query = Spotlight::Query.from_saved_search('foo.savedSearch')
 
+=== Creates .savedSearch
+
+ query.to_saved_search('bar.savedSearch')
+
 === Gets the metadata attribute for the specified file
 
  item = Spotlight::Item.new('/Users/youpy/foo')

@@ -1,4 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require 'tempfile'
 
 describe Spotlight::Query do
   before do
@@ -9,6 +10,17 @@ describe Spotlight::Query do
     query = Spotlight::Query.from_saved_search(fixture('test.savedSearch'))
     query.query_string.should eql('((true) && (true)) && ((* = "test*"cdw || kMDItemTextContent = "test*"cdw))')
     query.scopes.should eql(['kMDQueryScopeComputer'])
+  end
+
+  it "should create saved search from query" do
+    tempfile = Tempfile.new('saved_search')
+
+    @query.scopes << '/foo/bar'
+    @query.to_saved_search(tempfile.path)
+
+    plist = Plist::parse_xml(tempfile.path)
+    plist['RawQuery'].should eql('kMDItemDisplayName = "spotlight_query_spec.rb"')
+    plist['SearchCriteria']['FXScopeArrayOfPaths'].should eql(['/foo/bar'])
   end
 
   it "should have query string" do

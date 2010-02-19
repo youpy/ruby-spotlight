@@ -23,5 +23,18 @@ module Spotlight
       @md_query.set_search_scopes(@scopes)
       @md_query.execute
     end
+
+    def to_saved_search(filename)
+      obj = {
+        'RawQuery' => query_string,
+        'SearchCriteria' => {
+          'FXScopeArrayOfPaths' => scopes
+        }
+      }
+
+      File.open(filename, 'w') do |file|
+        file.write(obj.to_plist)
+      end
+    end
   end
 end
