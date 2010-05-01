@@ -11,9 +11,9 @@ begin
     gem.homepage = "http://github.com/youpy/ruby-spotlight"
     gem.authors = ["youpy"]
     gem.files = FileList['lib/**/*.rb', '**/*.c', '**/*.h'].to_a
+    gem.add_dependency "plist"
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "rake-compiler"
-    gem.add_development_dependency "plist"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
     gem.extensions = FileList["ext/**/extconf.rb"]
   end

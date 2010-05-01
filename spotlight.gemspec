@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["youpy"]
-  s.date = %q{2010-02-19}
+  s.date = %q{2010-05-01}
   s.description = %q{Library to use Spotlight from Ruby}
   s.email = %q{youpy@buycheapviagraonlinenow.com}
   s.extensions = ["ext/md_item_native/extconf.rb", "ext/md_query_native/extconf.rb"]
@@ -41,18 +41,18 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<plist>, [">= 0"])
       s.add_development_dependency(%q<rspec>, [">= 1.2.9"])
       s.add_development_dependency(%q<rake-compiler>, [">= 0"])
-      s.add_development_dependency(%q<plist>, [">= 0"])
     else
+      s.add_dependency(%q<plist>, [">= 0"])
       s.add_dependency(%q<rspec>, [">= 1.2.9"])
       s.add_dependency(%q<rake-compiler>, [">= 0"])
-      s.add_dependency(%q<plist>, [">= 0"])
     end
   else
+    s.add_dependency(%q<plist>, [">= 0"])
     s.add_dependency(%q<rspec>, [">= 1.2.9"])
     s.add_dependency(%q<rake-compiler>, [">= 0"])
-    s.add_dependency(%q<plist>, [">= 0"])
   end
 end
 
