@@ -172,7 +172,7 @@ static VALUE cMDItemNative_attribute_names(int argc, VALUE *argv, VALUE self)
   if(cfAttributeNames != NULL) {
     numAttributes = (int)CFArrayGetCount(cfAttributeNames);
     for(i = 0; i < numAttributes; i ++) {
-      rb_ary_push(result, CFString2RString((CFStringRef)CFArrayGetValueAtIndex(cfAttributeNames, i)));
+      rb_ary_push(result, rb_str_intern(CFString2RString((CFStringRef)CFArrayGetValueAtIndex(cfAttributeNames, i))));
     }
   }
 

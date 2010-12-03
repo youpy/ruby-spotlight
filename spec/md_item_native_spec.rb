@@ -26,6 +26,6 @@ describe Spotlight::MDItemNative do
   it "should get attribute names" do
     attribute_names = @item.attribute_names
     attribute_names.should be_an_instance_of(Array)
-    attribute_names.should be_include('kMDItemKind')
+    attribute_names.should be_include(:kMDItemKind)
   end
 end
