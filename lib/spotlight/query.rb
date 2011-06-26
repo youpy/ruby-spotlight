@@ -19,9 +19,9 @@ module Spotlight
     end
 
     def execute
-      @md_query = MDQueryNative.new(query_string)
-      @md_query.set_search_scopes(@scopes)
-      @md_query.execute
+      md_query = MDQueryNative.new(query_string)
+      md_query.set_search_scopes(scopes)
+      md_query.execute
     end
 
     def to_saved_search(filename)
