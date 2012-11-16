@@ -41,6 +41,6 @@ describe Spotlight::Query do
 
   it "should execute query with empty scope" do
     result = @query.execute
-    result.should_not be_empty 
+    result.should_not be_empty
   end
 end

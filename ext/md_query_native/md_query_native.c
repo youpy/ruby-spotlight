@@ -40,10 +40,11 @@ static VALUE cMDQueryNative_new(int argc, VALUE *argv, VALUE klass)
 {
   VALUE queryString;
   VALUE obj;
+  struct QueryObject *q;
 
   rb_scan_args(argc, argv, "1", &queryString);
 
-  struct QueryObject *q = malloc(sizeof(struct QueryObject));
+  q = malloc(sizeof(struct QueryObject));
   q->queryString = CString2CFString(StringValuePtr(queryString));
   q->query = MDQueryCreate(kCFAllocatorDefault, q->queryString, NULL, NULL);
   obj = Data_Wrap_Struct(klass, 0, cMDQueryNative_free, q);
@@ -59,15 +60,15 @@ static VALUE cMDQueryNative_set_search_scopes(int argc, VALUE *argv, VALUE self)
   int i;
 
   rb_scan_args(argc, argv, "1", &scopes);
-  itemsList = (CFStringRef *)malloc(sizeof(CFStringRef) * (RARRAY(scopes)->len));
+  itemsList = (CFStringRef *)malloc(sizeof(CFStringRef) * (RARRAY_LEN(scopes)));
 
-  for(i = 0; i < RARRAY(scopes)->len; i ++) {
-    itemsList[i] = (CFStringRef)CString2CFString(StringValuePtr(RARRAY(scopes)->ptr[i]));
+  for(i = 0; i < RARRAY_LEN(scopes); i ++) {
+    itemsList[i] = (CFStringRef)CString2CFString(StringValuePtr(RARRAY_PTR(scopes)[i]));
   }
 
   scopesList = CFArrayCreate(kCFAllocatorDefault,
                              (const void**)itemsList,
-                             RARRAY(scopes)->len,
+                             RARRAY_LEN(scopes),
                              NULL);
   MDQuerySetSearchScope(getQuery(self), scopesList, 0);
 

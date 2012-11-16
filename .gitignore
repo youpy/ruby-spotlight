@@ -1,9 +1,27 @@
+*.gem
+*.rbc
+.bundle
+.config
+.yardoc
+Gemfile.lock
+InstalledFiles
+_yardoc
+coverage
+doc/
+lib/bundler/man
+pkg
+rdoc
+spec/reports
+test/tmp
+test/version_tmp
+tmp
+*.bundle
+*.log
+*.o
+Makefile
+
 ## MAC OS
 .DS_Store
-
-## TEXTMATE
-*.tmproj
-tmtags
 
 ## EMACS
 *~
@@ -13,12 +31,4 @@ tmtags
 ## VIM
 *.swp
 
-## PROJECT::GENERAL
-coverage
-rdoc
-pkg
-
-## PROJECT::SPECIFIC
-
-*.bundle
 
