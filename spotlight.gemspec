@@ -14,7 +14,7 @@ Gem::Specification.new do |gem|
   gem.name          = "spotlight"
   gem.extensions    = ["ext/md_item_native/extconf.rb", "ext/md_query_native/extconf.rb"]
   gem.require_paths = ["lib"]
-  gem.version       = '0.0.5'
+  gem.version       = '0.0.6'
 
   gem.add_dependency('plist')
 
