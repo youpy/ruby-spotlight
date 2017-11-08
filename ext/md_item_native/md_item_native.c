@@ -167,7 +167,7 @@ static VALUE cMDItemNative_attribute_names(int argc, VALUE *argv, VALUE self)
   VALUE result = rb_ary_new();
   int numAttributes, i;
 
-  rb_scan_args(argc, argv, "0");
+  rb_scan_args(argc, argv, "0", NULL);
 
   cfAttributeNames = MDItemCopyAttributeNames(item);
 
