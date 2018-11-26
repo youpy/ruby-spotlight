@@ -1,5 +1,4 @@
 #include <ruby.h>
-#include </System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Headers/MDQuery.h>
 #include "../md_item_native/md_item_native.h"
 
 struct QueryObject {
