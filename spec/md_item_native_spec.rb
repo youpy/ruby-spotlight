@@ -11,8 +11,8 @@ describe Spotlight::MDItemNative do
   end
 
   it "should get attribute by name" do
-    @item.get('kMDItemKind').should eql('Ruby Source File')
-    @item.get(:kMDItemKind).should eql('Ruby Source File')
+    @item.get('kMDItemKind').should match('Ruby Source')
+    @item.get(:kMDItemKind).should match('Ruby Source')
     @item.get(:kMDItemFSName).should eql(@filename)
     @item.get(:kMDItemFSCreationDate).should be_an_instance_of(Time)
     @item.get(:kMDItemFSOwnerUserID).should be_an_instance_of(Fixnum)
