@@ -140,7 +140,7 @@ static VALUE cMDItemNative_get(int argc, VALUE *argv, VALUE self)
   rb_scan_args(argc, argv, "1", &attrName);
 
   if(TYPE(attrName) == T_SYMBOL) {
-    cfAttrName = (CFStringRef)CString2CFString(rb_id2name(SYM2ID(attrName)));
+    cfAttrName = (CFStringRef)CString2CFString((char *)rb_id2name(SYM2ID(attrName)));
   } else {
     cfAttrName = (CFStringRef)CString2CFString(StringValuePtr(attrName));
   }
