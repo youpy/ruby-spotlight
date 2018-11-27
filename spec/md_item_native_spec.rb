@@ -6,6 +6,24 @@ describe Spotlight::MDItemNative do
     @filename = File.basename(__FILE__)
   end
 
+  context 'file not found' do
+    it 'raises error' do
+      filename = __FILE__ + 'aaa'
+
+      expect {
+        Spotlight::MDItemNative.new(filename)
+      }.to(
+        raise_error(
+          ArgumentError,
+          format(
+            'no such file or directory: %<filename>s',
+            filename: filename
+          )
+        )
+      )
+    end
+  end
+
   it "should instanciate" do
     @item.should be_an_instance_of(Spotlight::MDItemNative)
   end

@@ -110,17 +110,19 @@ static VALUE cMDItemNative_new(int argc, VALUE *argv, VALUE klass)
 {
   VALUE filename, obj;
   MDItemRef item;
+  char *filenameString;
   CFStringRef cfFilename;
 
   rb_scan_args(argc, argv, "1", &filename);
 
-  cfFilename = CString2CFString(StringValuePtr(filename));
+  filenameString = StringValuePtr(filename);
+  cfFilename = CString2CFString(filenameString);
   item = MDItemCreate(kCFAllocatorDefault, cfFilename);
 
   if(item != NULL) {
     obj = createInstanceFromMDItem(item);
   } else {
-    rb_raise(rb_eArgError, "no such file or directory: %s", filename);
+    rb_raise(rb_eArgError, "no such file or directory: %s", filenameString);
   }
 
   CFRelease(cfFilename);
